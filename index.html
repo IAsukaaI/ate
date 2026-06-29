@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmirDerKek // Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/Icon/Nier.png">
+    
+    <style>
+        :root {
+            --cyber-yellow: #fcee0a;
+            --cyber-cyan: #00f0ff;
+            --cyber-dark: #0a0a0c;
+            --cyber-gray: #1e1f22;
+            --cyber-red: #ff0055;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--cyber-dark);
+            background-image: url('assets/bg/bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Rajdhani', sans-serif;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Scanlines & Grid Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 20%, var(--cyber-dark) 80%),
+                        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 100%, 100% 4px, 6px 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* Intro Screen */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        #intro-screen h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--cyber-yellow);
+            letter-spacing: 4px;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--cyber-yellow);
+            animation: pulse 1.5s infinite;
+        }
+
+        #intro-screen p {
+            color: var(--cyber-cyan);
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+
+        /* Lautstärkeregler */
+        .volume-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(10, 10, 12, 0.85);
+            border-left: 3px solid var(--cyber-cyan);
+            padding: 10px 20px;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 0 100%);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .volume-container.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .vol-label {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--cyber-cyan);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        #volume-slider {
+            -webkit-appearance: none;
+            width: 120px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        #volume-slider:focus { outline: none; }
+
+        #volume-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        #volume-slider::-webkit-slider-thumb {
+            height: 14px;
+            width: 8px;
+            background: var(--cyber-yellow);
+            -webkit-appearance: none;
+            margin-top: -6px;
+            border-radius: 0;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        #volume-slider:hover::-webkit-slider-thumb {
+            box-shadow: 0 0 10px rgba(252, 238, 10, 0.8);
+            transform: scale(1.2);
+        }
+
+        /* --- Mini Web Player Unten Links --- */
+        .mini-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(10, 10, 12, 0.85);
+            border-left: 3px solid var(--cyber-yellow);
+            padding: 10px 15px;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 0 100%);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mini-player.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Vinyl Disc aus purem CSS */
+        .vinyl {
+            width: 50px;
+            height: 50px;
+            background: #111;
+            border-radius: 50%;
+            border: 2px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.8), inset 0 0 5px rgba(255,255,255,0.1);
+            animation: spin 2.5s linear infinite;
+            animation-play-state: paused;
+        }
+
+        .vinyl.spinning {
+            animation-play-state: running;
+        }
+
+        /* Das Label in der Mitte der Platte */
+        .vinyl::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            background: var(--cyber-cyan);
+            border-radius: 50%;
+            border: 2px solid #000;
+        }
+
+        /* Kleine Rillen für die Platte */
+        .vinyl::before {
+            content: '';
+            position: absolute;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .player-btn {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyber-cyan);
+            color: var(--cyber-cyan);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        .player-btn:hover {
+            background: var(--cyber-cyan);
+            color: #000;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+        }
+
+        @keyframes spin { 
+            100% { transform: rotate(360deg); } 
+        }
+
+        /* Haupt-Container (Hub) */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 550px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .main-container.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Profil Header (Immer sichtbar) */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            background: rgba(10, 10, 12, 0.85);
+            border-left: 4px solid var(--cyber-yellow);
+            border-right: 4px solid var(--cyber-cyan);
+            padding: 20px;
+            width: 100%;
+            margin-bottom: 20px;
+            clip-path: polygon(0 0, 95% 0, 100% 20px, 100% 100%, 5% 100%, 0 calc(100% - 20px));
+            backdrop-filter: blur(10px);
+        }
+
+        .avatar {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            border: 2px solid var(--cyber-yellow);
+            box-shadow: 0 0 15px rgba(252, 238, 10, 0.3);
+            object-fit: cover;
+            margin-right: 20px;
+        }
+
+        .profile-info { text-align: left; }
+
+        .profile-info h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: #fff;
+            font-weight: 900;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .profile-info h1 span {
+            color: var(--cyber-cyan);
+            font-size: 0.9rem;
+            background: rgba(0, 240, 255, 0.1);
+            padding: 2px 6px;
+            border: 1px solid var(--cyber-cyan);
+        }
+
+        .status-text {
+            color: #888;
+            font-size: 1.05rem;
+            margin-top: 4px;
+        }
+
+        /* Hub Navigation (Tabs) */
+        .hub-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            padding-bottom: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(10, 10, 12, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            /* NEU: Textfarbe auf Cyber-Yellow geändert! */
+            color: var(--cyber-yellow); 
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+        }
+
+        .nav-btn:hover {
+            color: #fff; /* Beim Drüberfahren Weiß für besseren Kontrast */
+            border-color: var(--cyber-yellow);
+            background: rgba(252, 238, 10, 0.2);
+        }
+
+        .nav-btn.active {
+            /* Der aktive Tab bleibt Cyan zur Abhebung */
+            color: var(--cyber-cyan);
+            border-color: var(--cyber-cyan);
+            background: rgba(0, 240, 255, 0.15);
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+        }
+
+        /* Tab Content (Inhalte der Reiter) */
+        .tab-content {
+            display: none;
+            width: 100%;
+            animation: fadeInTab 0.4s ease forwards;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card Style für alle Tab-Inhalte */
+        .bio-card {
+            background: rgba(10, 10, 12, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 3px solid var(--cyber-cyan);
+            width: 100%;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            text-align: left;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .bio-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: var(--cyber-yellow);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bio-text {
+            font-size: 1.05rem;
+            color: #ddd;
+            line-height: 1.5;
+            letter-spacing: 0.5px;
+        }
+
+        .bio-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background-color: var(--cyber-cyan);
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        /* Cyberpunk Listen (Scrollbar gemacht) */
+        .cyber-list {
+            list-style: none;
+            max-height: 250px; /* Maximale Höhe der Liste */
+            overflow-y: auto;  /* Vertikales Scrollen aktivieren */
+            padding-right: 5px; /* Etwas Platz für die Scrollbar */
+        }
+
+        /* Cyberpunk Scrollbar Styling */
+        .cyber-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .cyber-list::-webkit-scrollbar-track {
+            background: rgba(0, 240, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .cyber-list::-webkit-scrollbar-thumb {
+            background: var(--cyber-cyan);
+            border-radius: 3px;
+        }
+
+        .cyber-list::-webkit-scrollbar-thumb:hover {
+            background: var(--cyber-yellow);
+        }
+
+        .cyber-list li {
+            background: rgba(0, 240, 255, 0.05);
+            border-left: 2px solid var(--cyber-cyan);
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            color: #ccc;
+            font-size: 1.05rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .cyber-list li:hover {
+            background: rgba(0, 240, 255, 0.15);
+            transform: translateX(5px);
+            border-left-color: var(--cyber-yellow);
+            color: #fff;
+        }
+
+        .list-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .list-desc {
+            font-size: 0.9rem;
+            color: #999;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .cyber-list li .highlight {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--cyber-yellow);
+            font-size: 0.8rem;
+        }
+
+        /* Social Icons Grid */
+        .socials-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(10, 10, 12, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
+        }
+
+        .social-icon img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            filter: grayscale(30%) brightness(0.9);
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .social-icon:hover {
+            border-color: var(--cyber-yellow);
+            transform: translateY(-3px);
+            box-shadow: 0 0 10px rgba(252, 238, 10, 0.4);
+        }
+
+        .social-icon:hover img {
+            filter: grayscale(0%) brightness(1.2);
+            transform: scale(1.1);
+        }
+
+        /* Animationen */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; text-shadow: 0 0 15px var(--cyber-yellow), 0 0 5px #fff; }
+            100% { opacity: 0.6; }
+        }
+
+        @keyframes blink {
+            from, to { background-color: transparent }
+            50% { background-color: var(--cyber-cyan); }
+        }
+
+        audio { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <div id="intro-screen" onclick="initSystem()">
+        <h2>[ COGNITIVE RECONNECTION ]</h2>
+        <p>TAP TO ENTER BLCKWALL</p>
+    </div>
+
+    <!-- Lautstärkeregler -->
+    <div class="volume-container" id="volume-control">
+        <span class="vol-label">VOL</span>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.3">
+    </div>
+
+    <!-- Mini Web Player -->
+    <div class="mini-player" id="mini-player">
+        <div class="vinyl" id="vinyl-disc"></div>
+        <div class="player-controls">
+            <button class="player-btn" onclick="togglePlay()">Play/Pause</button>
+            <button class="player-btn" onclick="skipSong()">Skip Track</button>
+        </div>
+    </div>
+
+    <div class="main-container" id="main-ui">
+        
+        <div class="profile-header">
+            <img src="assets/pfp/pfp.png" alt="Avatar" class="avatar">
+            <div class="profile-info">
+                <h1>𝔄-𝔗-𝔈 <span>Online</span></h1>
+                <div class="status-text">𝔗𝔥𝔢 𝔈𝔡𝔤𝔢𝔯𝔲𝔫𝔫𝔢𝔯</div>
+            </div>
+        </div>
+
+        <nav class="hub-nav">
+            <button class="nav-btn active" onclick="switchTab(event, 'tab-profile')">Profile</button>
+            <button class="nav-btn" onclick="switchTab(event, 'tab-achievements')">Achievements</button>
+            <button class="nav-btn" onclick="switchTab(event, 'tab-games')">Fav Games</button>
+            <button class="nav-btn" onclick="switchTab(event, 'tab-friends')">Friends</button>
+        </nav>
+
+        <div id="tab-profile" class="tab-content active">
+            <div class="bio-card">
+                <div class="bio-title">> FILE:Info.dat</div>
+                <p class="bio-text">18 ʏᴇᴀʀꜱ.
+                    𝔊𝔬𝔱𝔥𝔤𝔦𝔯𝔩𝔰 𝔡𝔪 𝔪𝔢 𝔭𝔩𝔰 𝔞𝔫𝔡 𝔱𝔬𝔪𝔟𝔬𝔶𝔰 𝔬𝔣𝔠.
+                 𝘓𝘰𝘷𝘦 𝘋𝘢𝘧𝘵𝘗𝘶𝘯𝘬. 𝘗𝘭𝘢𝘵𝘪𝘯 𝘊𝘺𝘣𝘦𝘳𝘱𝘶𝘯𝘬2077. 𝘓𝘰𝘷𝘦 𝘒𝘢𝘯𝘺𝘦. <span class="bio-cursor"></span>
+                </p>
+            </div>
+
+            <div class="socials-row">
+                <a href="https://medal.tv/de/u/AmirDerKek" target="_blank" class="social-icon" title="Medal.tv"><img src="assets/icon/medaltv.png" alt="Medal"></a>
+                <a href="https://www.youtube.com/@AmirDerKek" target="_blank" class="social-icon" title="YouTube"><img src="assets/icon/yt.png" alt="YouTube"></a>
+                <a href="https://www.instagram.com/3_am_amir" target="_blank" class="social-icon" title="Instagram"><img src="assets/icon/insta.png" alt="Instagram"></a>
+                <a href="https://open.spotify.com/user/amir_hd5000" target="_blank" class="social-icon" title="Spotify"><img src="assets/icon/Spotify.png" alt="Spotify"></a>
+                <a href="https://steamcommunity.com/profiles/76561199220604716" target="_blank" class="social-icon" title="Steam"><img src="assets/icon/Steam.png" alt="Steam"></a>
+                <a href="https://discord.com/users/630922246155665428" target="_blank" class="social-icon" title="Discord"><img src="assets/icon/discord.png" alt="Discord"></a>
+            </div>
+        </div>
+
+        <div id="tab-achievements" class="tab-content">
+            <div class="bio-card">
+                <div class="bio-title">> FILE:Achievements.dat</div>
+                <ul class="cyber-list">
+                    <li>
+                        <div class="list-top">
+                            100% Cyberpunk 2077 <span class="highlight">UNLOCKED</span>
+                        </div>
+                        <div class="list-desc">Got All cyberpunk Trophys and the dlc ones wasted ligetime.</div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                            Ps3 Modded<span class="highlight">UNLOCKED</span>
+                        </div>
+                        <div class="list-desc">Succesfully Modded a Ps3 Slim</div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                            Survive Diabetes <span class="highlight">UNLOCKED</span>
+                        </div>
+                        <div class="list-desc">4 Diabetes Poisonings Survived.</div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                            Emotional Damage<span class="highlight">UNLOCKED</span>
+                        </div>
+                        <div class="list-desc">Watcched Cyberpunk Edgerunners.</div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                            Get a Girlfriend<span class="highlight">NOT/EVEN/CLOSE</span>
+                        </div>
+                        <div class="list-desc">Son Is Realy Hoping.</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="tab-games" class="tab-content">
+            <div class="bio-card">
+                <div class="bio-title">> FILE:FavGames.dat</div>
+                <ul class="cyber-list">
+                    <li>
+                        <div class="list-top">
+                            Cyberpunk 2077 <span class="highlight">500+ HRS</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                            VALORANT <span class="highlight">400+ HRS</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                            GrandTheftAuto 5 <span class="highlight">300+ HRS</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                            ROBLOX <span class="highlight">500+ HRS</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    <!-- Friends Tab -->
+    <div id="tab-friends" class="tab-content">
+        <div class="bio-card">
+            <div class="bio-title">> FILE:Network.dat</div>
+            <ul class="cyber-list">
+                <li>
+                    <div class="list-top">
+                        Daniel<span class="highlight">Mercanary</span>
+                    </div>
+                    <div class="list-desc">
+                        <a href="https://discord.com/users/1348124106981376011" target="_blank">.notlikeme.</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="list-top">
+                    Asukaa<span class="highlight">Netrunner</span>
+                    </div>
+                    <!-- HIER IST DIE ANPASSUNG -->
+                    <div class="list-desc" style="display: flex; align-items: center; justify-content: space-between;">
+                        <a href="https://discord.com/users/818168096006996008" target="_blank">iasukaai.</a>
+                        <a href="https://asukaa.de" target="_blank" class="player-btn" style="text-decoration: none;">Website</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="list-top">
+                        Aleks<span class="highlight">Tactical</span>
+                    </div>
+                    <div class="list-desc">
+                        <a href="https://discord.com/users/1436327171143503922" target="_blank">nyxiraid2x</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="list-top">
+                        Sanin<span class="highlight">Maine</span>
+                    </div>
+                    <div class="list-desc">Has No Discord</div>
+                </li>
+                <li>
+                    <div class="list-top">
+                        Patrick<span class="highlight">Kid</span>
+                    </div>
+                    <div class="list-desc">
+                        <a href="https://discord.com/users/946106812749463613" target="_blank">kxzolas</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="list-top">
+                        Yusuf<span class="highlight">Tanker</span>
+                    </div>
+                    <div class="list-desc">
+                        <a href="https://discord.com/users/1188572809476178126" target="_blank">123x_anonym_x123</a>
+                    </div>
+                </li>
+                <li>
+                <div class="list-top">
+                    Deniz<span class="highlight">Sneaky</span>
+                </div>
+                <div class="list-desc">
+                    <a href="https://discord.com/users/928369750277521418" target="_blank">deniztv22</a>
+                </div>
+            </li>
+            <li>
+                <div class="list-top">
+                    Naomi<span class="highlight">Gbsf</span>
+                </div>
+                <div class="list-desc">
+                    <a href="https://discord.com/users/1019231637646622771" target="_blank">minao9678</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+    </div>
+
+    <audio id="cyber-audio"></audio>
+
+    <script>
+        /* Mixtape Playlist Logic */
+        const playlist = [
+            "https://files.catbox.moe/8lc2kz.mp3",
+            "https://files.catbox.moe/dt6rce.mp3", 
+            "https://files.catbox.moe/mbetuo.mp3",
+            "https://files.catbox.moe/oe9e2p.mp3"  
+        ];
+
+        const audio = document.getElementById('cyber-audio');
+        const volumeSlider = document.getElementById('volume-slider');
+        const vinyl = document.getElementById('vinyl-disc');
+
+        audio.volume = volumeSlider.value;
+
+        volumeSlider.addEventListener('input', function() {
+            audio.volume = this.value;
+        });
+
+        // Spielt einen zufälligen Song aus der Playlist
+        function playRandomSong() {
+            const randomIndex = Math.floor(Math.random() * playlist.length);
+            audio.src = playlist[randomIndex];
+            
+            audio.play().then(() => {
+                vinyl.classList.add('spinning');
+            }).catch(error => {
+                console.log("Autoplay blockiert oder fehlgeschlagen:", error);
+                vinyl.classList.remove('spinning');
+            });
+        }
+
+        // Wenn ein Song endet, spiele automatisch den nächsten
+        audio.addEventListener('ended', playRandomSong);
+
+        // NEU: Error-Handler für langsame/kaputte Catbox-Links
+        audio.addEventListener('error', function() {
+            console.warn("Song konnte nicht geladen werden (Catbox-Server langsam?). Überspringe zum nächsten...");
+            playRandomSong();
+        });
+
+        // Play/Pause Button Logik
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                vinyl.classList.add('spinning');
+            } else {
+                audio.pause();
+                vinyl.classList.remove('spinning');
+            }
+        }
+
+        // Skip Button Logik
+        function skipSong() {
+            playRandomSong();
+        }
+
+        // Intro / Start Logic 
+        function initSystem() {
+            const intro = document.getElementById('intro-screen');
+            intro.style.opacity = '0';
+            intro.style.visibility = 'hidden';
+
+            const mainUi = document.getElementById('main-ui');
+            mainUi.classList.add('active');
+
+            const volControl = document.getElementById('volume-control');
+            volControl.classList.add('active');
+
+            const miniPlayer = document.getElementById('mini-player');
+            miniPlayer.classList.add('active');
+
+            // Starte den ersten zufälligen Song beim Klick ins Intro
+            playRandomSong();
+        }
+
+        // Tab Switch Logic
+        function switchTab(event, tabId) {
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
