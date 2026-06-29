@@ -177,7 +177,7 @@
             transform: translateX(0);
         }
 
-        /* Vinyl Disc aus purem CSS */
+        /* Vinyl Disc */
         .vinyl {
             width: 50px;
             height: 50px;
@@ -190,13 +190,13 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.8), inset 0 0 5px rgba(255,255,255,0.1);
             animation: spin 2.5s linear infinite;
             animation-play-state: paused;
+            flex-shrink: 0;
         }
 
         .vinyl.spinning {
             animation-play-state: running;
         }
 
-        /* Das Label in der Mitte der Platte */
         .vinyl::after {
             content: '';
             width: 16px;
@@ -206,7 +206,6 @@
             border: 2px solid #000;
         }
 
-        /* Kleine Rillen für die Platte */
         .vinyl::before {
             content: '';
             position: absolute;
@@ -214,6 +213,31 @@
             height: 34px;
             border-radius: 50%;
             border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Song Info Container */
+        .song-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 130px;
+        }
+
+        .now-playing {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6rem;
+            color: var(--cyber-yellow);
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        #song-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .player-controls {
@@ -265,10 +289,11 @@
             transform: scale(1);
         }
 
-        /* Profil Header (Immer sichtbar) */
+        /* Profil Header */
         .profile-header {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             background: rgba(10, 10, 12, 0.85);
             border-left: 4px solid var(--cyber-yellow);
             border-right: 4px solid var(--cyber-cyan);
@@ -277,6 +302,11 @@
             margin-bottom: 20px;
             clip-path: polygon(0 0, 95% 0, 100% 20px, 100% 100%, 5% 100%, 0 calc(100% - 20px));
             backdrop-filter: blur(10px);
+        }
+
+        .profile-left {
+            display: flex;
+            align-items: center;
         }
 
         .avatar {
@@ -316,6 +346,20 @@
             margin-top: 4px;
         }
 
+        /* System Status (Uhr & Ping) */
+        .system-status {
+            text-align: right;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        #cyber-clock { color: var(--cyber-cyan); }
+        #cyber-ping { color: var(--cyber-yellow); }
+
         /* Hub Navigation (Tabs) */
         .hub-nav {
             display: flex;
@@ -331,7 +375,6 @@
         .nav-btn {
             background: rgba(10, 10, 12, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            /* NEU: Textfarbe auf Cyber-Yellow geändert! */
             color: var(--cyber-yellow); 
             font-family: 'Orbitron', sans-serif;
             font-size: 0.85rem;
@@ -344,20 +387,19 @@
         }
 
         .nav-btn:hover {
-            color: #fff; /* Beim Drüberfahren Weiß für besseren Kontrast */
+            color: #fff;
             border-color: var(--cyber-yellow);
             background: rgba(252, 238, 10, 0.2);
         }
 
         .nav-btn.active {
-            /* Der aktive Tab bleibt Cyan zur Abhebung */
             color: var(--cyber-cyan);
             border-color: var(--cyber-cyan);
             background: rgba(0, 240, 255, 0.15);
             text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
         }
 
-        /* Tab Content (Inhalte der Reiter) */
+        /* Tab Content */
         .tab-content {
             display: none;
             width: 100%;
@@ -373,7 +415,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Card Style für alle Tab-Inhalte */
+        /* Card Style */
         .bio-card {
             background: rgba(10, 10, 12, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -403,6 +445,7 @@
             color: #ddd;
             line-height: 1.5;
             letter-spacing: 0.5px;
+            min-height: 80px; 
         }
 
         .bio-cursor {
@@ -415,32 +458,17 @@
             vertical-align: middle;
         }
 
-        /* Cyberpunk Listen (Scrollbar gemacht) */
         .cyber-list {
             list-style: none;
-            max-height: 250px; /* Maximale Höhe der Liste */
-            overflow-y: auto;  /* Vertikales Scrollen aktivieren */
-            padding-right: 5px; /* Etwas Platz für die Scrollbar */
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 5px;
         }
 
-        /* Cyberpunk Scrollbar Styling */
-        .cyber-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .cyber-list::-webkit-scrollbar-track {
-            background: rgba(0, 240, 255, 0.05);
-            border-radius: 3px;
-        }
-
-        .cyber-list::-webkit-scrollbar-thumb {
-            background: var(--cyber-cyan);
-            border-radius: 3px;
-        }
-
-        .cyber-list::-webkit-scrollbar-thumb:hover {
-            background: var(--cyber-yellow);
-        }
+        .cyber-list::-webkit-scrollbar { width: 6px; }
+        .cyber-list::-webkit-scrollbar-track { background: rgba(0, 240, 255, 0.05); border-radius: 3px; }
+        .cyber-list::-webkit-scrollbar-thumb { background: var(--cyber-cyan); border-radius: 3px; }
+        .cyber-list::-webkit-scrollbar-thumb:hover { background: var(--cyber-yellow); }
 
         .cyber-list li {
             background: rgba(0, 240, 255, 0.05);
@@ -483,7 +511,7 @@
             font-size: 0.8rem;
         }
 
-        /* Social Icons Grid */
+        /* Social Icons */
         .socials-row {
             display: flex;
             justify-content: center;
@@ -548,15 +576,17 @@
         <p>TAP TO ENTER BLCKWALL</p>
     </div>
 
-    <!-- Lautstärkeregler -->
     <div class="volume-container" id="volume-control">
         <span class="vol-label">VOL</span>
         <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.3">
     </div>
 
-    <!-- Mini Web Player -->
     <div class="mini-player" id="mini-player">
         <div class="vinyl" id="vinyl-disc"></div>
+        <div class="song-info">
+            <div class="now-playing">NOW PLAYING</div>
+            <div id="song-title">SYSTEM BOOT...</div>
+        </div>
         <div class="player-controls">
             <button class="player-btn" onclick="togglePlay()">Play/Pause</button>
             <button class="player-btn" onclick="skipSong()">Skip Track</button>
@@ -566,10 +596,17 @@
     <div class="main-container" id="main-ui">
         
         <div class="profile-header">
-            <img src="assets/pfp/pfp.png" alt="Avatar" class="avatar">
-            <div class="profile-info">
-                <h1>𝔄-𝔗-𝔈 <span>Online</span></h1>
-                <div class="status-text">𝔗𝔥𝔢 𝔈𝔡𝔤𝔢𝔯𝔲𝔫𝔫𝔢𝔯</div>
+            <div class="profile-left">
+                <img src="assets/pfp/pfp.png" alt="Avatar" class="avatar">
+                <div class="profile-info">
+                    <h1>𝔄-𝔗-𝔈 <span>Online</span></h1>
+                    <div class="status-text">𝔗𝔥𝔢 𝔈𝔡𝔤𝔢𝔯𝔲𝔫𝔫𝔢𝔯</div>
+                </div>
+            </div>
+            
+            <div class="system-status">
+                <div id="cyber-clock">TIME: --:--:--</div>
+                <div id="cyber-ping">PING: --ms</div>
             </div>
         </div>
 
@@ -583,19 +620,18 @@
         <div id="tab-profile" class="tab-content active">
             <div class="bio-card">
                 <div class="bio-title">> FILE:Info.dat</div>
-                <p class="bio-text">18 ʏᴇᴀʀꜱ.
-                    𝔊𝔬𝔱𝔥𝔤𝔦𝔯𝔩𝔰 𝔡𝔪 𝔪𝔢 𝔭𝔩𝔰 𝔞𝔫𝔡 𝔱𝔬𝔪𝔟𝔬𝔶𝔰 𝔬𝔣𝔠.
-                 𝘓𝘰𝘷𝘦 𝘋𝘢𝘧𝘵𝘗𝘶𝘯𝘬. 𝘗𝘭𝘢𝘵𝘪𝘯 𝘊𝘺𝘣𝘦𝘳𝘱𝘶𝘯𝘬2077. 𝘓𝘰𝘷𝘦 𝘒𝘢𝘯𝘺𝘦. <span class="bio-cursor"></span>
+                <p class="bio-text">
+                    <span id="typewriter-text"></span><span class="bio-cursor"></span>
                 </p>
             </div>
 
             <div class="socials-row">
-                <a href="https://medal.tv/de/u/AmirDerKek" target="_blank" class="social-icon" title="Medal.tv"><img src="assets/Icon/medaltv.png" alt="Medal"></a>
-                <a href="https://www.youtube.com/@AmirDerKek" target="_blank" class="social-icon" title="YouTube"><img src="assets/Icon/yt.png" alt="YouTube"></a>
-                <a href="https://www.instagram.com/3_am_amir" target="_blank" class="social-icon" title="Instagram"><img src="assets/Icon/insta.png" alt="Instagram"></a>
-                <a href="https://open.spotify.com/user/amir_hd5000" target="_blank" class="social-icon" title="Spotify"><img src="assets/Icon/Spotify.png" alt="Spotify"></a>
-                <a href="https://steamcommunity.com/profiles/76561199220604716" target="_blank" class="social-icon" title="Steam"><img src="assets/Icon/Steam.png" alt="Steam"></a>
-                <a href="https://discord.com/users/630922246155665428" target="_blank" class="social-icon" title="Discord"><img src="assets/Icon/discord.png" alt="Discord"></a>
+                <a href="https://medal.tv/de/u/AmirDerKek" target="_blank" class="social-icon" title="Medal.tv"><img src="assets/icon/medaltv.png" alt="Medal"></a>
+                <a href="https://www.youtube.com/@AmirDerKek" target="_blank" class="social-icon" title="YouTube"><img src="assets/icon/yt.png" alt="YouTube"></a>
+                <a href="https://www.instagram.com/3_am_amir" target="_blank" class="social-icon" title="Instagram"><img src="assets/icon/insta.png" alt="Instagram"></a>
+                <a href="https://open.spotify.com/user/amir_hd5000" target="_blank" class="social-icon" title="Spotify"><img src="assets/icon/Spotify.png" alt="Spotify"></a>
+                <a href="https://steamcommunity.com/profiles/76561199220604716" target="_blank" class="social-icon" title="Steam"><img src="assets/icon/Steam.png" alt="Steam"></a>
+                <a href="https://discord.com/users/630922246155665428" target="_blank" class="social-icon" title="Discord"><img src="assets/icon/discord.png" alt="Discord"></a>
             </div>
         </div>
 
@@ -607,7 +643,7 @@
                         <div class="list-top">
                             100% Cyberpunk 2077 <span class="highlight">UNLOCKED</span>
                         </div>
-                        <div class="list-desc">Got All cyberpunk Trophys and the dlc ones wasted ligetime.</div>
+                        <div class="list-desc">Got All cyberpunk Trophys and the dlc ones, wasted livetime.</div>
                     </li>
                     <li>
                         <div class="list-top">
@@ -625,7 +661,7 @@
                         <div class="list-top">
                             Emotional Damage<span class="highlight">UNLOCKED</span>
                         </div>
-                        <div class="list-desc">Watcched Cyberpunk Edgerunners.</div>
+                        <div class="list-desc">Watched Cyberpunk Edgerunners.</div>
                     </li>
                     <li>
                         <div class="list-top">
@@ -665,95 +701,101 @@
             </div>
         </div>
 
-    <!-- Friends Tab -->
-    <div id="tab-friends" class="tab-content">
-        <div class="bio-card">
-            <div class="bio-title">> FILE:Network.dat</div>
-            <ul class="cyber-list">
-                <li>
+        <div id="tab-friends" class="tab-content">
+            <div class="bio-card">
+                <div class="bio-title">> FILE:Network.dat</div>
+                <ul class="cyber-list">
+                    <li>
+                        <div class="list-top">
+                            Daniel<span class="highlight">Mercanary</span>
+                        </div>
+                        <div class="list-desc">
+                            <a href="https://discord.com/users/1348124106981376011" target="_blank" style="color: #999; text-decoration: none;">.notlikeme.</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                        Asukaa<span class="highlight">Netrunner</span>
+                        </div>
+                        <div class="list-desc" style="display: flex; align-items: center; justify-content: space-between;">
+                            <a href="https://discord.com/users/818168096006996008" target="_blank" style="color: #999; text-decoration: none;">iasukaai.</a>
+                            <a href="https://asukaa.de" target="_blank" class="player-btn" style="text-decoration: none;">Website</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                            Aleks<span class="highlight">Tactical</span>
+                        </div>
+                        <div class="list-desc">
+                            <a href="https://discord.com/users/1436327171143503922" target="_blank" style="color: #999; text-decoration: none;">nyxiraid2x</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                            Sanin<span class="highlight">Maine</span>
+                        </div>
+                        <div class="list-desc">Has No Discord</div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                            Patrick<span class="highlight">Kid</span>
+                        </div>
+                        <div class="list-desc">
+                            <a href="https://discord.com/users/946106812749463613" target="_blank" style="color: #999; text-decoration: none;">kxzolas</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="list-top">
+                            Yusuf<span class="highlight">Tanker</span>
+                        </div>
+                        <div class="list-desc">
+                            <a href="https://discord.com/users/1188572809476178126" target="_blank" style="color: #999; text-decoration: none;">123x_anonym_x123</a>
+                        </div>
+                    </li>
+                    <li>
                     <div class="list-top">
-                        Daniel<span class="highlight">Mercanary</span>
+                        Deniz<span class="highlight">Sneaky</span>
                     </div>
                     <div class="list-desc">
-                        <a href="https://discord.com/users/1348124106981376011" target="_blank">.notlikeme.</a>
+                        <a href="https://discord.com/users/928369750277521418" target="_blank" style="color: #999; text-decoration: none;">deniztv22</a>
                     </div>
                 </li>
                 <li>
                     <div class="list-top">
-                    Asukaa<span class="highlight">Netrunner</span>
-                    </div>
-                    <!-- HIER IST DIE ANPASSUNG -->
-                    <div class="list-desc" style="display: flex; align-items: center; justify-content: space-between;">
-                        <a href="https://discord.com/users/818168096006996008" target="_blank">iasukaai.</a>
-                        <a href="https://asukaa.de" target="_blank" class="player-btn" style="text-decoration: none;">Website</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="list-top">
-                        Aleks<span class="highlight">Tactical</span>
+                        Naomi<span class="highlight">Gbsf</span>
                     </div>
                     <div class="list-desc">
-                        <a href="https://discord.com/users/1436327171143503922" target="_blank">nyxiraid2x</a>
+                        <a href="https://discord.com/users/1019231637646622771" target="_blank" style="color: #999; text-decoration: none;">minao9678</a>
                     </div>
                 </li>
-                <li>
-                    <div class="list-top">
-                        Sanin<span class="highlight">Maine</span>
-                    </div>
-                    <div class="list-desc">Has No Discord</div>
-                </li>
-                <li>
-                    <div class="list-top">
-                        Patrick<span class="highlight">Kid</span>
-                    </div>
-                    <div class="list-desc">
-                        <a href="https://discord.com/users/946106812749463613" target="_blank">kxzolas</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="list-top">
-                        Yusuf<span class="highlight">Tanker</span>
-                    </div>
-                    <div class="list-desc">
-                        <a href="https://discord.com/users/1188572809476178126" target="_blank">123x_anonym_x123</a>
-                    </div>
-                </li>
-                <li>
-                <div class="list-top">
-                    Deniz<span class="highlight">Sneaky</span>
-                </div>
-                <div class="list-desc">
-                    <a href="https://discord.com/users/928369750277521418" target="_blank">deniztv22</a>
-                </div>
-            </li>
-            <li>
-                <div class="list-top">
-                    Naomi<span class="highlight">Gbsf</span>
-                </div>
-                <div class="list-desc">
-                    <a href="https://discord.com/users/1019231637646622771" target="_blank">minao9678</a>
-                </div>
-            </li>
-        </ul>
+            </ul>
+        </div>
     </div>
-</div>
 
     </div>
 
     <audio id="cyber-audio"></audio>
 
     <script>
-        /* Mixtape Playlist Logic */
         const playlist = [
-            "https://files.catbox.moe/8lc2kz.mp3",
-            "https://files.catbox.moe/dt6rce.mp3", 
-            "https://files.catbox.moe/mbetuo.mp3",
-            "https://files.catbox.moe/oe9e2p.mp3"  
+            { src: "https://files.catbox.moe/8lc2kz.mp3", title: "FaceToFace" },
+            { src: "https://files.catbox.moe/dt6rce.mp3", title: "Lose Yourself To Dance" },
+            { src: "https://files.catbox.moe/mbetuo.mp3", title: "AERODYNAMIC" },
+            { src: "https://files.catbox.moe/bk168n.mp3", title: "Who's Ready for Tomorrow" },
+            { src: "https://files.catbox.moe/e24njm.mp3", title: "Chippin’ In" },
+            { src: "https://files.catbox.moe/gafof6.mp3", title: "Never Fade Away" },
+            { src: "https://files.catbox.moe/tkmgcr.mp3", title: "The Ballad of Buck Ravers" },
+            { src: "https://files.catbox.moe/amrp1c.mp3", title: "A Like Supreme" },
+            { src: "https://files.catbox.moe/xdreq7.mp3", title: "Black Dog" },
+            { src: "https://files.catbox.moe/4m6crq.mp3", title: "Archangel" },
+            { src: "https://files.catbox.moe/x8yv9s.mp3", title: "I Realy Want To Stay At Your House" },
+            { src: "https://files.catbox.moe/oe9e2p.mp3", title: "VeridisQuo" }
         ];
 
         const audio = document.getElementById('cyber-audio');
         const volumeSlider = document.getElementById('volume-slider');
         const vinyl = document.getElementById('vinyl-disc');
+        const songTitleDisplay = document.getElementById('song-title');
 
         audio.volume = volumeSlider.value;
 
@@ -764,8 +806,13 @@
         // Spielt einen zufälligen Song aus der Playlist
         function playRandomSong() {
             const randomIndex = Math.floor(Math.random() * playlist.length);
-            audio.src = playlist[randomIndex];
+            const selectedTrack = playlist[randomIndex];
+
+            // Song Setup
+            audio.src = selectedTrack.src;
+            songTitleDisplay.innerText = selectedTrack.title; 
             
+            // Play
             audio.play().then(() => {
                 vinyl.classList.add('spinning');
             }).catch(error => {
@@ -774,16 +821,13 @@
             });
         }
 
-        // Wenn ein Song endet, spiele automatisch den nächsten
         audio.addEventListener('ended', playRandomSong);
 
-        // NEU: Error-Handler für langsame/kaputte Catbox-Links
         audio.addEventListener('error', function() {
-            console.warn("Song konnte nicht geladen werden (Catbox-Server langsam?). Überspringe zum nächsten...");
+            console.warn("Song konnte nicht geladen werden. Überspringe zum nächsten...");
             playRandomSong();
         });
 
-        // Play/Pause Button Logik
         function togglePlay() {
             if (audio.paused) {
                 audio.play();
@@ -794,9 +838,49 @@
             }
         }
 
-        // Skip Button Logik
         function skipSong() {
             playRandomSong();
+        }
+
+        /* FEATURE 2: Clock & Ping System Logic */
+        function startSystemStatus() {
+            const clock = document.getElementById('cyber-clock');
+            const ping = document.getElementById('cyber-ping');
+            
+            setInterval(() => {
+                const now = new Date();
+                clock.innerText = `SYS TIME: ${now.toLocaleTimeString('de-DE')}`;
+            }, 1000);
+
+            setInterval(() => {
+                const randomPing = Math.floor(Math.random() * (45 - 12 + 1)) + 12; 
+                ping.innerText = `LATENCY: ${randomPing}ms // SECURE`;
+            }, 2500);
+        }
+
+        /* FEATURE 1: Typewriter Bio Logic */
+        const bioString = "18 ʏᴇᴀʀꜱ OLD.\n𝔊𝔬𝔱𝔥𝔤𝔦𝔯𝔩𝔰 𝔡𝔪 𝔪𝔢 𝔭𝔩𝔰 𝔞𝔫𝔡 𝔱𝔬𝔪𝔟𝔬𝔶𝔰 𝔬𝔣𝔠.\n𝘋𝘢𝘧𝘵𝘗𝘶𝘯𝘬. 𝘗𝘭𝘢𝘵𝘪𝘯 𝘊𝘺𝘣𝘦𝘳𝘱𝘶𝘯𝘬2077.";
+        const bioChars = [...bioString]; 
+        let typeIndex = 0;
+        let isTypingStarted = false;
+
+        function startTypewriter() {
+            if(isTypingStarted) return;
+            isTypingStarted = true;
+            
+            function typeNext() {
+                if (typeIndex < bioChars.length) {
+                    let char = bioChars[typeIndex];
+                    if(char === '\n') {
+                        document.getElementById("typewriter-text").innerHTML += "<br>";
+                    } else {
+                        document.getElementById("typewriter-text").innerHTML += char;
+                    }
+                    typeIndex++;
+                    setTimeout(typeNext, 40); 
+                }
+            }
+            setTimeout(typeNext, 500);
         }
 
         // Intro / Start Logic 
@@ -814,8 +898,9 @@
             const miniPlayer = document.getElementById('mini-player');
             miniPlayer.classList.add('active');
 
-            // Starte den ersten zufälligen Song beim Klick ins Intro
             playRandomSong();
+            startSystemStatus();
+            startTypewriter();
         }
 
         // Tab Switch Logic
@@ -829,6 +914,6 @@
             event.currentTarget.classList.add('active');
             document.getElementById(tabId).classList.add('active');
         }
-       </script>
+    </script>
 </body>
 </html>
